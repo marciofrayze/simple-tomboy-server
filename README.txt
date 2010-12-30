@@ -1,5 +1,5 @@
-Simple Tomboy Server - v0.1
-===========================
+Simple Tomboy Server - v0.1.1
+=============================
 
  THE AUTHOR OF THIS SOFTWARE IS NOT RELATED TO THE AUTHORS OF TOMBOY SOFTWARE
 
@@ -48,5 +48,15 @@ Open a web-browser and go to http://localhost:10002
 
 Change "localhost" to your ip address to be able to access it from another
 computer.
+
+
+Compatibility
+=============
+
+This software was created and tested under Ubuntu 8.04. It may not work on
+different distributions without some basic chances in the code.
+Please, make sure the BASE_DIR variable is set correctly. Future versions will
+be more clever about this.
+
 
 Have Fun!
