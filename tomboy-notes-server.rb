@@ -75,7 +75,7 @@ class TomBoyServer < GServer
         start_link_index = line.index('<link:internal>') + 15
         title = line[start_link_index, final_link_index-start_link_index]
         page = get_page_with_title(title)
-        if page != 'Not_Found' # and page.size == @@BASE_DIR.length + 36
+        if page != 'Not_Found'
           page = page[@@BASE_DIR.length, 36]
           line.sub!('<link:internal>', '<a href=' + page + ">")
           line.sub!('</link:internal>', '</a>')
