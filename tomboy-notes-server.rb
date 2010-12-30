@@ -41,7 +41,7 @@ class TomBoyServer < GServer
 
     # Writing default http protocol and some basic html code
     io.puts "HTTP/1.1 200/OK\r\nContent-type:text/html ; charset=UTF-8\r\n\r\n"    
-    user_response = "<title>Tomboy - Server</title></head><body>"
+    user_response = "<title>Simple Tomboy Server - " + ENV['USER'] + "</title></head><body>"
 
     # Checking if user is accessing a page. If so, read the file and print it to the output
     if note_name != '' and note_name!='/' and is_note_name_safe?(note_name)
