@@ -31,8 +31,9 @@ require 'gserver'
 
 class TomBoyServer < GServer
 
-  # This is the default directory for tomboy files
-  @@BASE_DIR = ENV['HOME'] + "/.tomboy/"
+  # This is the default directory for tomboy files (if you are using an old version of tomboy, 
+  # change this to "/.tomboy/"
+  @@BASE_DIR = ENV['HOME'] + "/.local/share/tomboy/"
 
   def serve(io)
     # Getting and parsing the user command to get the name of the note the user wants to access
@@ -135,8 +136,15 @@ class TomBoyServer < GServer
     tomboy_code.gsub!('<size:large>', '<font size=+2>')
     tomboy_code.gsub!('<size:huge>', '<font size=+4>')
     tomboy_code.gsub!(/<\/size:[^>]+>/, '</font>')
-    # Erasing all others tags (except b, i, h1 and font tags)
-    tomboy_code.gsub!(/<[^(?\/b>)(?\/i>)(?\/i>)(?\/h1>)(?\/font>)]([^>]+)>/, '')
+    # Erasing all others useless xml tags
+    tomboy_code.gsub!(/<?xml version=[^>]+>/, '')
+    tomboy_code.gsub!(/<note version=[^>]+>/, '')
+    tomboy_code.gsub!(/<text xml:space=\"preserve\"><note-content version=[^>]+>/, '')
+    tomboy_code.gsub!('<title>', '<h1>')
+    tomboy_code.gsub!('</title>', '</h1>')
+    tomboy_code.gsub!('</note-content></text>', '')
+    tomboy_code.gsub!('<link:internal>', '')  # it should be replaced already, just in case
+    tomboy_code.gsub!('</link:internal>', '') # it should be replaced already, just in case    
     return tomboy_code.to_s
   end
 
