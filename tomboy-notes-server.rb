@@ -132,12 +132,9 @@ class TomBoyServer < GServer
     tomboy_code.gsub!('<italic>', '<i>')
     tomboy_code.gsub!('</italic>', '</i>')
     tomboy_code.gsub!('<size:small>', '<font size=-1>')
-    tomboy_code.gsub!('</size:small>', '</font>')
     tomboy_code.gsub!('<size:large>', '<font size=+2>')
-    tomboy_code.gsub!('</size:large>', '</font>')
     tomboy_code.gsub!('<size:huge>', '<font size=+4>')
-    tomboy_code.gsub!('</size:huge>', '</font>')
-
+    tomboy_code.gsub!(/<\/size:[^>]+>/, '</font>')
     # Erasing all others tags (except b, i, h1 and font tags)
     tomboy_code.gsub!(/<[^(?\/b>)(?\/i>)(?\/i>)(?\/h1>)(?\/font>)]([^>]+)>/, '')
     return tomboy_code.to_s
