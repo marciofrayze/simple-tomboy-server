@@ -46,7 +46,7 @@ class TomBoyServer < GServer
     # Checking if user is accessing a page. If so, read the file and print it to the output
     if note_name != '' and note_name!='/' and is_note_name_safe?(note_name)
 	    user_response += load_note(note_name)
-      # If no page was requested, create a menu with links to all the notes
+    # If no page was requested, create a menu with links to all the notes
     else
 	    user_response += create_menu()
     end
