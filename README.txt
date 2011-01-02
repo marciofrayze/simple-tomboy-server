@@ -53,7 +53,7 @@ computer.
 Compatibility
 =============
 
-This software was created and tested under Ubuntu 8.04. It may not work on
+This software was created and tested under Ubuntu 10.10. It may not work on
 different distributions without some basic chances in the code.
 Please, make sure the BASE_DIR variable is set correctly. Future versions will
 be more clever about this.
