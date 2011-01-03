@@ -32,7 +32,7 @@ require 'gserver'
 class TomBoyServer < GServer
 
   # This is the default directory for tomboy files (if you are using an old version of tomboy, 
-  # change this to "/.tomboy/"
+  # change this to "/.tomboy/)"
   @@BASE_DIR = ENV['HOME'] + "/.local/share/tomboy/"
 
   def serve(io)
