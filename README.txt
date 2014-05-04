@@ -3,7 +3,7 @@ Simple Tomboy Server - v0.1.1
 
  THE AUTHOR OF THIS SOFTWARE IS NOT RELATED TO THE AUTHORS OF TOMBOY SOFTWARE
 
- Copyright (c) 2011 Marcio Frayze David (mfdavid@gmail.com)
+ Copyright (c) 2011-2014 Marcio Frayze David (mfdavid@gmail.com)
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -53,8 +53,8 @@ computer.
 Compatibility
 =============
 
-This software was created and tested under Ubuntu 10.10. It may not work on
-different distributions without some basic chances in the code.
+This software was created and tested under Ubuntu 10.04 and Ruby 2.0.0. 
+It may not work on different distributions without some basic chances in the code.
 Please, make sure the BASE_DIR variable is set correctly. Future versions will
 be more clever about this.
 

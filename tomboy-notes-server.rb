@@ -1,9 +1,9 @@
-#!/usr/bin/ruby1.8
+#!/usr/bin/ruby
 
-# Simple Tomboy Server version 0.1.1
+# Simple Tomboy Server version 0.1.2
 # THE AUTHOR OF THIS SOFTWARE IS NOT RELATED TO THE AUTHORS OF TOMBOY SOFTWARE
 
-# Copyright (c) 2011 Marcio Frayze David (mfdavid@gmail.com)
+# Copyright (c) 2011-2014 Marcio Frayze David (mfdavid@gmail.com)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,47 +29,74 @@
 
 require 'gserver'
 
+# This is the default directory for tomboy note files
+# If you are using an old version of tomboy, yoy may need to change this to "/.tomboy/"
+@@BASE_DIR = ENV['HOME'] + '/.local/share/tomboy/'
+
 class TomBoyServer < GServer
 
-  # This is the default directory for tomboy files (if you are using an old version of tomboy, 
-  # change this to "/.tomboy/)"
-  @@BASE_DIR = ENV['HOME'] + "/.local/share/tomboy/"
-
-  def serve(io)
-    # Getting and parsing the user command to get the name of the note the user wants to access
+	# Getting and parsing the user command to get the name of the note the user wants to access	
+	def parse_note_name_from_request(io)
     parameters = io.gets
     note_name = parameters[5,parameters.length-16].strip
+	end
 
-    # Writing default http protocol and some basic html code
-    io.puts "HTTP/1.1 200/OK\r\nContent-type:text/html ; charset=UTF-8\r\n\r\n"    
-    user_response = "<title>Simple Tomboy Server - " + ENV['USER'] + "</title></head><body>"
+	# Main method used by gserver, called when a new http request is received
+  def serve(io)
+		note_name = parse_note_name_from_request(io)   		
+		return '' if note_name == 'favicon.ico' 			# Ignore request if it is for favicon.ico		
+		log "Receive request for note: #{note_name}"  # logs request into console
 
-    # Checking if user is accessing a page. If so, read the file and print it to the output
-    if note_name != '' and note_name!='/' and is_note_name_safe?(note_name)
-	    user_response += load_note(note_name)
-    # If no page was requested, create a menu with links to all the notes
-    else
-	    user_response += create_menu()
-    end
+		# Sending back to the user some basic http header response
+		io.puts(basic_http_response_header)
 
-    # HTML tail code
-    user_response += "<br /><hr>Powered by Simple Tomboy Server"
-    user_response += "</body></html>"
-
-    # Optimizing the final html code   
-    user_response = user_response.strip.gsub(/\n/,'') 		# Strip out blank lines
-    user_response.gsub!(/(<br \/>){3,}/, '<br /><br />')	# Avoid repetitive break lines
-    user_response.gsub!(/<\/h1>(<br \/>){2,}/, '</h1><br />')	# Avoid repetitive break lines
+    # Processing and generating the actual user response    
+    user_response = html_head_code
+    user_response += simple_top_menu if is_note_name_valid?(note_name)	# Includes a simple top menu if not in the listing page
+		user_response += page_content(note_name)														# Includes the note content or list of notes
+  	user_response += css_code 																					# Inject some css
+    user_response += html_tail_code 																		# HTML tail code      
+		user_response = optimize_html_code(user_response)										# Optimizing the final html code
+	
+		# Sending page back to the user
     io.puts(user_response)
+		log "Done processing request"
   end
 
-  # Load (and parse to html) a note - this code is a little messy, should be refactored
+	def page_content(note_name)
+		page_body = '<body>'
+
+    # Checking if user is accessing a page. If so, read the file and print it to the output
+		# If no page was requested (or the page requested was not found), 
+		# create a menu with links to all the notes
+    if is_note_name_valid?(note_name)
+			log "Returning content from note: #{note_name}"
+	    page_body += load_note(note_name)
+    else
+			log 'Returning menu...'
+	    page_body += create_menu			
+    end
+		page_body += '</body>'
+
+		return page_body
+	end
+
+	# Strip out blank lines and useless tags
+	def optimize_html_code(html_code)
+    html_code = html_code.strip.gsub(/\n/,'') 						# Strip out blank lines
+    html_code.gsub!(/(<br \/>){3,}/, '<br /><br />')			# Avoid repetitive break lines
+    html_code.gsub!(/<\/h1>(<br \/>){2,}/, '</h1><br />')	# Avoid repetitive break lines again
+		return html_code
+	end
+
+  # Load (and parse to html) a note - this code is very messy, should be refactored
   def load_note(note_name)
-    lines = IO.readlines(@@BASE_DIR + "/" + note_name + ".note")
+    lines = IO.readlines(@@BASE_DIR + '/' + note_name + '.note')
     lines = delete_non_relevant_lines(lines)
-    user_response = "<a href = \"javascript:history.back()\"><< Back to previous page</a> | <a href=.>Main menu</a>" # Simple menu
+    user_response = ''
+		# Reading note lines
     lines.each { |line|
-      #Translating the links (get the title of the page and then recover the name of the file to create the link)
+      # Translating the links (get the title of the page and then recover the name of the file to create the link)
       start_link_index = line.index('<link:internal>')
       final_link_index = line.index('</link:internal>')
       while(start_link_index != nil  and final_link_index != nil)         # While there is still links to convert
@@ -78,53 +105,54 @@ class TomBoyServer < GServer
         page = get_page_with_title(title)
         if page != 'Not_Found'
           page = page[@@BASE_DIR.length, 36]
-          line.sub!('<link:internal>', '<a href=' + page + ">")
+          line.sub!('<link:internal>', '<a href=' + page + '>')
           line.sub!('</link:internal>', '</a>')
-        else  # There is a link, but it's not valid! So we ignore it.
+        else # There is a link, but it's not valid! So we ignore it.
           line.sub!('<link:internal>', '')
           line.sub!('</link:internal>', '')
         end
         final_link_index = line.index('</link:internal>') # Checking if there is still more links in this line
       end
-      user_response += convert_tomboy_to_html(line + "<br />")
+      user_response += convert_tomboy_to_html(line + '<br />')
     }
     return user_response
   end
 
   # Creates the default menu listing all the notes
   def create_menu	
-    menu = "<h1>Listing all notes</h1>"
+    menu = '<h1>Listing all notes</h1>'
     tomboy_notes = list_all_tomboy_notes
     tomboy_notes.each { | note |
-      # get the name of the note
+      # Get the name of the note
       lines = IO.read(note)
-      title_index = lines.index("<title>") + 7
-      title_end_index = lines.index("</title>")
+      title_index = lines.index('<title>') + 7
+      title_end_index = lines.index('</title>')
       note = note[@@BASE_DIR.length, 36]
-      menu += "<a href=" + note + ">"
-      menu += convert_tomboy_to_html(lines[title_index, title_end_index-title_index]) + "</a><br />"
+      menu += "<a href=#{note}>"
+      menu += convert_tomboy_to_html(lines[title_index, title_end_index-title_index]) + '</a><br />'
     }
     return menu
   end
 
   # Ignore non-relevant lines (is there a better way to do this?)
   def delete_non_relevant_lines(lines)
-    lines[0] = ''
-    lines[3] = ''
-    lines[-1] = ''
-    lines[-2] = ''
-    lines[-3] = ''
-    lines[-4] = ''
-    lines[-5] = ''
-    lines[-6] = ''
-    lines[-7] = ''
-    lines[-8] = ''
-    lines[-9] = ''
+    lines[0]   = ''
+    lines[3]   = ''
+    lines[-1]  = ''
+    lines[-2]  = ''
+    lines[-3]  = ''
+    lines[-4]  = ''
+    lines[-5]  = ''
+    lines[-6]  = ''
+    lines[-7]  = ''
+    lines[-8]  = ''
+    lines[-9]  = ''
     lines[-10] = ''
     return lines
   end
 
-  # I know, this code is very very ugly.. but I'm too lazy to care :) fell free to refactor it.
+  # Converting tomboy xml code to html
+	# I know, this code is very very ugly... but it works :) fell free to refactor it.
   def convert_tomboy_to_html(tomboy_code)
     tomboy_code.gsub!('<title>', '<h1>')
     tomboy_code.gsub!('</title>', '</h1>')
@@ -150,47 +178,70 @@ class TomBoyServer < GServer
 
   # Return the name of all tomboy notes files
   def list_all_tomboy_notes
-    return Dir.glob(@@BASE_DIR + "*.note")
+    return Dir.glob(@@BASE_DIR + '*.note')
   end
 
-  # Checks if the name of a note is safe (constains 36 standard chars)
-  def is_note_name_safe?(note_name)
-    if note_name.size!=36
-      return false
-    end
+  # Checks if the name of a note is valid (constains 36 standard chars and exists)
+  def is_note_name_valid?(note_name)
+
+    return false if note_name.size != 36
 
     note_name.each_byte { |c|
-      unless "qwertyuiopasdfghjklzxcvbnm-1234567890".include?(c)
-        return false
-      end
+      return false if not 'qwertyuiopasdfghjklzxcvbnm-1234567890'.include?(c.chr)
     }
 
-    #checking if file exists
-    if File.exist?(@@BASE_DIR + note_name + ".note")
-      return true
-    end
-
-    return false
+    # Checking if file exists
+		return File.exist?(@@BASE_DIR + note_name + '.note')
   end
 
   # Given a title, returns the respective note file name
   def get_page_with_title(title)
     tomboy_notes = list_all_tomboy_notes
     tomboy_notes.each { | note |
-      # get the name of the note
+      # Get the name of the note
       lines = IO.read(note)
-      title_index = lines.index("<title>") + 7
-      title_end_index = lines.index("</title>")
+      title_index = lines.index('<title>') + 7
+      title_end_index = lines.index('</title>')
       current_title = lines[title_index, title_end_index-title_index]
       if current_title == title
         return note
       end
     }
-    return "Not_Found"
+    return 'Not_Found'
   end
+
+	def html_head_code
+		'<html><title>Simple Tomboy Server - ' + ENV['USER'] + '</title></head>'
+	end
+
+	def basic_http_response_header
+		"HTTP/1.1 200/OK\r\nContent-type:text/html ; charset=UTF-8\r\n\r\n"
+	end
+
+	# Just some final html code closing tags, etc.
+	def html_tail_code
+		'<br /><hr>Powered by <a href="https://github.com/mfdavid/Simple-Tomboy-Server">Simple Tomboy Server</a></body></html>'
+	end
+
+	# Some CSS code that will be injected in the page to try and make it look less terrible
+	def css_code
+		'<style>body { background-color: #F0F0F0; margin:5% 15%; padding:0px; } a { text-decoration: none; color: #0000FF } a:hover { color: #0066CC; }</style>'		
+	end
+
+	# Just a very simple top menu
+	def simple_top_menu
+		'<a href = "javascript:history.back()"><< Back to previous page</a> | <a href=.>Main menu</a>' 
+	end
+
+	# For now, just logging the messages on console
+	def log(message)
+		puts Time.now.to_s + ' ' + message.to_s
+	end
+
 end
 
 # Starts the server :-)
 server = TomBoyServer.new(10002, nil)
 server.start
+puts 'Server started.'
 server.join
