@@ -53,7 +53,7 @@ computer.
 Compatibility
 =============
 
-This software was created and tested under Ubuntu 10.04 and Ruby 2.0.0. 
+This software was created and tested under Ubuntu 12 LTS and Ruby 2.1.5. 
 It may not work on different distributions without some basic chances in the code.
 Please, make sure the BASE_DIR variable is set correctly. Future versions will
 be more clever about this.
