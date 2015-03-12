@@ -1,4 +1,4 @@
-Simple Tomboy Server - v0.1.1
+Simple Tomboy Server - v0.1.2
 =============================
 
  THE AUTHOR OF THIS SOFTWARE IS NOT RELATED TO THE AUTHORS OF TOMBOY SOFTWARE
