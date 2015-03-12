@@ -44,7 +44,7 @@ class TomBoyServer < GServer
   # Main method used by gserver, called when a new http request is received
   def serve(io)
     note_name = parse_note_name_from_request(io)
-    return '' if note_name == 'favicon.ico' 			# Ignore request if it is for favicon.ico
+    return '' if note_name == 'favicon.ico'       # Ignore request if it is for favicon.ico
     log "Receive request for note: #{note_name}"  # logs request into console
 
     # Sending back to the user some basic http header response
