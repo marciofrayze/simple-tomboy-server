@@ -1,5 +1,5 @@
-Simple Tomboy Server - v0.1.2
-=============================
+# Simple Tomboy Server - v0.1.2
+
 
  THE AUTHOR OF THIS SOFTWARE IS NOT RELATED TO THE AUTHORS OF TOMBOY SOFTWARE
 
@@ -28,16 +28,14 @@ Simple Tomboy Server - v0.1.2
  SUCH DAMAGE.
 
 
-About this software
-===================
+## About this software
 
 Simple Tomboy Server is a software that allows you to read all notes 
 created with the Tomboy software from anywhere in the world using a
 web-browser.
 
 
-How to use it
-=============
+## How to use it
 
 Before you run this software, you must install Ruby Programming Language.
 
@@ -50,8 +48,7 @@ Change "localhost" to your ip address to be able to access it from another
 computer.
 
 
-Compatibility
-=============
+## Compatibility
 
 This software was created and tested under Ubuntu 12 LTS and Ruby 2.1.5. 
 It may not work on different distributions without some basic chances in the code.
