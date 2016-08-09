@@ -30,9 +30,8 @@
 
 ## About this software
 
-Simple Tomboy Server is a software that allows you to read all notes 
-created with the Tomboy software from anywhere in the world using a
-web-browser.
+Simple Tomboy Server allows you to read all notes created with the Tomboy 
+software from anywhere in the world using a web-browser.
 
 
 ## How to use it
