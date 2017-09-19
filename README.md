@@ -39,11 +39,13 @@ software from anywhere in the world using a web-browser.
 Before you run this software, you must install Ruby Programming Language.
 
 Start the server using the following command:
+```
 ruby tomboy-notes-server.rb
+```
 
-Open a web-browser and go to http://localhost:10002
+Open a web-browser and go to *http://localhost:10002*
 
-Change "localhost" to your ip address to be able to access it from another
+Change *localhost* to your ip address to be able to access it from another
 computer.
 
 
@@ -51,7 +53,7 @@ computer.
 
 This software was created and tested under Ubuntu 12 LTS and Ruby 2.1.5. 
 It may not work on different distributions without some basic chances in the code.
-Please, make sure the BASE_DIR variable is set correctly. Future versions will
+Please, make sure the *BASE_DIR* variable is set correctly. Future versions will
 be more clever about this.
 
 
