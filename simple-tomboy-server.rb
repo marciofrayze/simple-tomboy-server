@@ -45,7 +45,7 @@ class TomBoyServer < GServer
   def serve(io)
     note_name = parse_note_name_from_request(io)
     return '' if note_name == 'favicon.ico'       # Ignore request if it is for favicon.ico
-    log "Receive request for note: #{note_name}"  # logs request into console
+    log "Received request for note: #{note_name}"  # logs request into console
 
     # Sending back to the user some basic http header response
     io.puts(basic_http_response_header)
