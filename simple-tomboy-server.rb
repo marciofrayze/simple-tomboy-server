@@ -3,7 +3,7 @@
 # Simple Tomboy Server version 0.1.2
 # THE AUTHOR OF THIS SOFTWARE IS NOT RELATED TO THE AUTHORS OF TOMBOY SOFTWARE
 
-# Copyright (c) 2011-2016 Marcio Frayze David (mfdavid@gmail.com)
+# Copyright (c) 2011-2018 Marcio Frayze David (mfdavid@gmail.com)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
