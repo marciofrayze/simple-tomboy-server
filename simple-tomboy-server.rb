@@ -32,7 +32,7 @@ require 'gserver'
 class TomBoyServer < GServer
 
   # This is the default directory for tomboy note files
-  # If you are using an old version of tomboy, yoy may need to change this to "/.tomboy/"
+  # If you are using an old version of tomboy, you may need to change this to "/.tomboy/"
   @@BASE_DIR = ENV['HOME'] + '/.local/share/tomboy/'
 
   # Getting and parsing the user command to get the name of the note the user wants to access
